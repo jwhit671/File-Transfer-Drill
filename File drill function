@@ -1,0 +1,65 @@
+
+from tkinter import *
+from tkinter import filedialog as fd
+import os
+import sys
+import time as t
+import shutil as s
+from datetime import datetime as dt
+
+class fold:
+    folderC = ''
+    folderD = ''
+    now = dt.now()
+
+
+def doFileCheck():
+    print('folderC: ' + f.folderC)
+    print('folderD: ' + f.folderD)
+
+    folderC = f.folderC
+    folderD = f.folderD
+    for thefile in os.listdir(folderC):
+        modtime = dt.fromtimestamp(os.stat(folderC + thefile).st_mtime)
+        diff_seconds = (f.now - modtime).seconds
+        diff_days = (f.now - modtime).days
+        diff_hours = diff_days*24 + diff_seconds/3600
+        print('Checking: ' + thefile)
+        print('Modifed, hours ago: ' + str(diff_hours))
+        if diff_hours < 24:
+            s.copy(folderC + thefile, folderD + thefile)
+            print('Copied file: ' + thefile)
+        print('')
+
+
+def folderSelect(x):
+    if x == 'C':
+         f.folderC = fd.askdirectory() + '/'
+         print('Source Folder: ' + f.folderC)
+    if x == 'D':
+         f.folderD = fd.askdirectory() + '/'
+         print('Source Folder: ' + f.folderD)
+'''def tester():
+     print('Source Folder: ' + f.folderC)
+     print('Destination Folder: ' + f.folderD)''' 
+ 
+
+
+root = Tk()
+f = fold()
+
+textbox=Text(root)
+textbox.pack()
+
+button1= Button(root, text="Select Folder for Source", command = lambda: folderSelect('C')).pack()
+
+button2= Button(root, text="Select Folder for Destination", command = lambda:folderSelect('D')).pack()
+
+button3= Button(root, text="Perform File Check and Move", command = doFileCheck).pack()
+#tk.Button(root, text="Show Folders", command = tester).pack()
+def redirector(inputStr):
+    textbox.insert(INSERT, inputStr)
+
+sys.stdout.write = redirector #whenever sys.stdout.write is called, redirector is called.
+
+root.mainloop()
